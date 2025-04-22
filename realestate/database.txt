@@ -1,0 +1,38 @@
+/** 
+* Paste one or more documents here
+*/
+{
+  "property_title": "metu",
+  "status": "Sale",
+  "type": "Home",
+  "max_rooms": "4",
+  "beds": "3",
+  "baths": "3",
+  "area": "13",
+  "price": "14",
+  "description": "cfghbjknbhf",
+  "location": "Karachi",
+  "city": "Karachi",
+  "landmark": "kosi bus stop",
+  "video_link": "https://www.youtube.com/watch?v=KJN6nOHAx8I",
+  "features": [
+    "Emergency Exit",
+    "CCTV",
+    "Free Wi-Fi",
+    "Free Parking In The Area",
+    "Air Conditioning"
+  ],
+  "email": "desta1037@gmail.com",
+  "mobile_number": "+928140279065",
+  "whatsapp_number": "+928149279065",
+  "created_at": "20250312223006",
+  "created_by": "metu",
+  "image_1": "assets/images/properties/BrKPPKDkP7.jpg",
+  "image_2": "assets/images/properties/S2zwq1CqjU.jpg",
+  "image_3": "assets/images/properties/mOev8NIdSN.jpg",
+  "image_4": "assets/images/properties/ayfuptN8Sb.jpg",
+  "image_5": "assets/images/properties/pIZba2os8b.jpg",
+  "image_6": "assets/images/properties/puoaNyGBMS.jpg",
+  "image_7": "assets/images/properties/O2Lyy0Nzps.jpg",
+  "image_8": "assets/images/properties/UhLPzYsrNc.jpg"
+}
