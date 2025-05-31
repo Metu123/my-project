@@ -1,68 +1,69 @@
 services:
   - type: web
     name: laravel-backend
-    env: php
-    region: oregon
-    branch: main
-    rootDir: backend
-    buildCommand: composer install && php artisan config:clear && php artisan route:clear
-    startCommand: php artisan serve --host 0.0.0.0 --port 10000
+    env: docker
+    rootDir: realestate
+    plan: free
+    buildCommand: ""
+    startCommand: ""
+    dockerfilePath: realestate/Dockerfile
     envVars:
       - key: APP_NAME
         value: Laravel
       - key: APP_ENV
         value: production
-      - key: APP_KEY
-        fromSecret: APP_KEY_SECRET
       - key: APP_DEBUG
-        value: 'true'
+        value: false
+      - key: APP_KEY
+        generateValue: true
       - key: APP_URL
-        value: https://your-laravel-backend-url.onrender.com
+        value: https://laravel-backend.onrender.com
       - key: DB_CONNECTION
         value: mongodb
       - key: DB_HOST
-        fromSecret: MONGO_DB_HOST
+        value: cluster-1.8lmdnd6.mongodb.net
       - key: DB_PORT
-        value: '27017'
+        value: 27017
       - key: DB_DATABASE
-        fromSecret: MONGO_DB_NAME
+        value: realestate
       - key: DB_USERNAME
-        fromSecret: MONGO_DB_USER
+        value: metu
       - key: DB_PASSWORD
-        fromSecret: MONGO_DB_PASS
+        value: Mdsg@Ab!2d*a
       - key: DB_URI
-        fromSecret: MONGO_DB_URI
+        value: mongodb+srv://metu:Mdsg%40Ab%212d%2Aa@cluster-1.8lmdnd6.mongodb.net/realestate?retryWrites=true&w=majority&appName=Cluster-1
       - key: SESSION_DRIVER
         value: file
       - key: SESSION_LIFETIME
-        value: '120'
+        value: 120
       - key: SESSION_ENCRYPT
-        value: 'true'
+        value: true
       - key: MAIL_MAILER
         value: smtp
       - key: MAIL_HOST
         value: smtp-relay.brevo.com
       - key: MAIL_PORT
-        value: '465'
+        value: 465
       - key: MAIL_USERNAME
         value: 8a41de001@smtp-brevo.com
       - key: MAIL_PASSWORD
-        fromSecret: MAIL_PASSWORD
+        value: xsmtp...secure
       - key: MAIL_ENCRYPTION
         value: ssl
       - key: MAIL_FROM_ADDRESS
         value: tanzimudassir@gmail.com
       - key: MAIL_FROM_NAME
         value: PakEarth
+      - key: NUXT_URL
+        value: https://nuxt-frontend.onrender.com 
 
   - type: web
-    name: nuxt3-frontend
+    name: nuxt-frontend
     env: node
-    region: oregon
-    branch: main
     rootDir: frontend
+    plan: free
     buildCommand: npm install && npm run build
     startCommand: npm run preview
     envVars:
       - key: NUXT_PUBLIC_API_BASE_URL
-        value: https://your-laravel-backend-url.onrender.com/api
+        value: https://laravel-backend.onrender.com/api
