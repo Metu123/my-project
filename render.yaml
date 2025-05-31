@@ -4,9 +4,9 @@ services:
     env: docker
     rootDir: realestate
     plan: free
+    dockerfilePath: realestate/Dockerfile
     buildCommand: ""
     startCommand: ""
-    dockerfilePath: realestate/Dockerfile
     envVars:
       - key: APP_NAME
         value: Laravel
@@ -34,10 +34,6 @@ services:
         value: mongodb+srv://metu:Mdsg%40Ab%212d%2Aa@cluster-1.8lmdnd6.mongodb.net/realestate?retryWrites=true&w=majority&appName=Cluster-1
       - key: SESSION_DRIVER
         value: file
-      - key: SESSION_LIFETIME
-        value: 120
-      - key: SESSION_ENCRYPT
-        value: true
       - key: MAIL_MAILER
         value: smtp
       - key: MAIL_HOST
