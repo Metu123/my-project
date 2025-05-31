@@ -54,16 +54,3 @@ services:
         value: tanzimudassir@gmail.com
       - key: MAIL_FROM_NAME
         value: PakEarth
-      - key: NUXT_URL
-        value: https://nuxt-frontend.onrender.com 
-
-  - type: web
-    name: nuxt-frontend
-    env: node
-    rootDir: frontend
-    plan: free
-    buildCommand: npm install && npm run build
-    startCommand: npm run preview
-    envVars:
-      - key: NUXT_PUBLIC_API_BASE_URL
-        value: https://laravel-backend.onrender.com/api
