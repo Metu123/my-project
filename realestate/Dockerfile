@@ -1,4 +1,4 @@
-# Use official PHP with Apache
+# Use official PHP 8.2 with Apache
 FROM php:8.2-apache
 
 # Install system dependencies and PHP extensions
@@ -23,24 +23,24 @@ RUN a2enmod rewrite
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy Laravel app into the container
+# Copy Laravel app to container
 COPY . .
 
-# Copy default .env file so Laravel can load env during build
+# Copy .env.example to .env for build-time requirements
 COPY .env.example .env
 
-# Install Composer
+# Install Composer (from Composer official image)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Install PHP dependencies with maximum verbosity
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist -vvv
 
-# Set correct permissions
+# Set proper permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage
 
 # Expose port
 EXPOSE 8000
 
-# Start Apache
+# Start Apache server
 CMD ["apache2-foreground"]
