@@ -4,7 +4,9 @@ FROM php:8.2-apache
 # Set working directory
 WORKDIR /var/www/html
 
+# ----------------------------
 # Install system dependencies
+# ----------------------------
 RUN apt-get update && apt-get install -y \
     build-essential \
     libzip-dev \
@@ -26,42 +28,54 @@ RUN apt-get update && apt-get install -y \
     libjpeg62-turbo-dev \
     libmcrypt-dev \
     libxslt-dev \
+    nodejs \
+    npm \
     && docker-php-ext-install zip pdo pdo_mysql intl xml gd
 
-# Install MongoDB PHP extension
+# ----------------------------
+# Install MongoDB PHP Extension
+# ----------------------------
 RUN pecl install mongodb-1.20.0 \
     && docker-php-ext-enable mongodb
 
-# Enable Apache rewrite module
+# ----------------------------
+# Enable Apache Rewrite Module
+# ----------------------------
 RUN a2enmod rewrite
 
-# Fix Apache 403 forbidden by updating DocumentRoot and config
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
-
-# Also fix <Directory> block for /public to allow Laravel's index.php routing
-RUN echo '<Directory /var/www/html/public>\n\
-    Options Indexes FollowSymLinks\n\
-    AllowOverride All\n\
-    Require all granted\n\
-</Directory>' > /etc/apache2/conf-available/laravel.conf \
-    && a2enconf laravel
-
-# Install Composer (use official image as source)
+# ----------------------------
+# Install Composer
+# ----------------------------
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy app source code
+# ----------------------------
+# Copy Laravel Codebase
+# ----------------------------
 COPY . .
 
-# Set correct permissions for Laravel
+# ----------------------------
+# Set proper permissions
+# ----------------------------
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+    && chmod -R 755 /var/www/html/storage
 
-# Install PHP dependencies (without dev)
+# ----------------------------
+# Install PHP dependencies
+# ----------------------------
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-# Expose Apache
-EXPOSE 80
+# ----------------------------
+# Install Node dependencies & build frontend (Vite)
+# ----------------------------
+RUN npm install && npm run build
 
-# Start Apache
+# ----------------------------
+# Set Apache DocumentRoot to public/
+# ----------------------------
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
+
+# ----------------------------
+# Expose port and start Apache
+# ----------------------------
+EXPOSE 80
 CMD ["apache2-foreground"]
