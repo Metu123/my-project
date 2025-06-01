@@ -28,28 +28,40 @@ RUN apt-get update && apt-get install -y \
     libxslt-dev \
     && docker-php-ext-install zip pdo pdo_mysql intl xml gd
 
-# Install the required MongoDB extension version for Laravel compatibility
+# Install MongoDB PHP extension
 RUN pecl install mongodb-1.20.0 \
     && docker-php-ext-enable mongodb
 
 # Enable Apache rewrite module
 RUN a2enmod rewrite
 
-# Install Composer
+# Fix Apache 403 forbidden by updating DocumentRoot and config
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+
+# Also fix <Directory> block for /public to allow Laravel's index.php routing
+RUN echo '<Directory /var/www/html/public>\n\
+    Options Indexes FollowSymLinks\n\
+    AllowOverride All\n\
+    Require all granted\n\
+</Directory>' > /etc/apache2/conf-available/laravel.conf \
+    && a2enconf laravel
+
+# Install Composer (use official image as source)
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy existing application directory
+# Copy app source code
 COPY . .
 
-# Set file permissions
+# Set correct permissions for Laravel
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist -vvv
+# Install PHP dependencies (without dev)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-# Expose port 80
+# Expose Apache
 EXPOSE 80
 
-# Start Apache in the foreground
+# Start Apache
 CMD ["apache2-foreground"]
