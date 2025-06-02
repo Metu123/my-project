@@ -1,15 +1,14 @@
 FROM php:8.2-apache
 
-WORKDIR /var/www/html
-
+# Install system dependencies and PHP extensions required by Laravel
 RUN apt-get update && apt-get install -y \
-    build-essential \
     libzip-dev \
     unzip \
+    zip \
     git \
     curl \
-    libssl-dev \
-    pkg-config \
+    gnupg \
+    build-essential \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
@@ -22,31 +21,43 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libxslt-dev \
-    gnupg \
-    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs npm \
-    && docker-php-ext-install zip pdo pdo_mysql intl xml gd
+    pkg-config \
+    libssl-dev
 
-RUN pecl install mongodb-1.20.0 && docker-php-ext-enable mongodb
+# Setup Node.js 18 repository properly
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 
+# Install Node.js and npm
+RUN apt-get install -y nodejs
+
+# Install PHP extensions after dependencies installed
+RUN docker-php-ext-install zip pdo pdo_mysql intl xml gd
+
+# Enable Apache mod_rewrite (required for Laravel routes)
 RUN a2enmod rewrite
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-COPY . .
-
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
-
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-
-RUN npm install && npm run build
-
-RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
-
+# Copy custom Apache configuration to container
 COPY docker-apache.conf /etc/apache2/conf-available/laravel.conf
 RUN a2enconf laravel
 
+# Set working directory inside the container
+WORKDIR /var/www/html
+
+# Copy application files into container
+COPY . .
+
+# Install Composer globally
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install PHP dependencies (you can do this on the host too if preferred)
+RUN composer install --no-dev --optimize-autoloader
+
+# Set permissions for Laravel storage and bootstrap cache
+RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache
+
+# Expose port 80 for web traffic
 EXPOSE 80
 
+# Start Apache in foreground
 CMD ["apache2-foreground"]
