@@ -1,48 +1,65 @@
-# Start from official PHP image with Apache
+# Use official PHP with Apache
 FROM php:8.2-apache
 
 # Set working directory
 WORKDIR /var/www/html
 
+# ----------------------------
 # Install system dependencies
+# ----------------------------
 RUN apt-get update && apt-get install -y \
+    build-essential \
     libzip-dev \
     unzip \
     git \
     curl \
+    libssl-dev \
+    pkg-config \
     libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
-    pkg-config \
-    libssl-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd intl pdo_mysql zip sodium
+    libicu-dev \
+    libpq-dev \
+    zlib1g-dev \
+    nano \
+    vim \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libmcrypt-dev \
+    libxslt-dev \
+    nodejs \
+    npm \
+    && docker-php-ext-install zip pdo pdo_mysql intl xml gd
 
-# Install MongoDB extension
-RUN pecl install mongodb && \
-    echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongodb.ini
+# ----------------------------
+# Install MongoDB PHP Extension
+# ----------------------------
+RUN pecl install mongodb-1.20.0 && docker-php-ext-enable mongodb
 
-# Enable Apache mod_rewrite
+# Enable Apache rewrite
 RUN a2enmod rewrite
 
-# Copy Apache configuration for Laravel
-COPY docker-apache.conf /etc/apache2/conf-available/laravel.conf
-RUN a2enconf laravel
-
-# Install Composer globally
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Copy project files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Fix Apache to serve from /public
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 
-# Set permissions (you can tweak these as needed)
-RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
+# Set correct permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage
 
-# Expose port 80 and start Apache
+# Install PHP deps
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Install Node dependencies and build assets (Bootstrap etc)
+RUN npm install && npm run build
+
+# Expose web server port
 EXPOSE 80
+
 CMD ["apache2-foreground"]
