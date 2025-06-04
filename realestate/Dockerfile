@@ -4,15 +4,15 @@ FROM php:8.2-apache
 # Set working directory
 WORKDIR /var/www/html
 
+# ----------------------------
 # Install system dependencies
+# ----------------------------
 RUN apt-get update && apt-get install -y \
     build-essential \
     libzip-dev \
     unzip \
     git \
     curl \
-    nodejs \
-    npm \
     libssl-dev \
     pkg-config \
     libpng-dev \
@@ -28,36 +28,54 @@ RUN apt-get update && apt-get install -y \
     libjpeg62-turbo-dev \
     libmcrypt-dev \
     libxslt-dev \
+    nodejs \
+    npm \
     && docker-php-ext-install zip pdo pdo_mysql intl xml gd
 
-# Enable Apache rewrite module
-RUN a2enmod rewrite
-
-# Fix Apache to serve from /public
-RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
-
-# Install MongoDB PHP extension (if needed)
+# ----------------------------
+# Install MongoDB PHP Extension
+# ----------------------------
 RUN pecl install mongodb-1.20.0 \
     && docker-php-ext-enable mongodb
 
+# ----------------------------
+# Enable Apache Rewrite Module
+# ----------------------------
+RUN a2enmod rewrite
+
+# ----------------------------
 # Install Composer
+# ----------------------------
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy existing application code
+# ----------------------------
+# Copy Laravel Codebase
+# ----------------------------
 COPY . .
 
-# Fix permissions
+# ----------------------------
+# Set proper permissions
+# ----------------------------
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chmod -R 755 /var/www/html/storage
 
+# ----------------------------
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# ----------------------------
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-# Install Node modules and build assets
+# ----------------------------
+# Install Node dependencies & build frontend (Vite)
+# ----------------------------
 RUN npm install && npm run build
 
-# Expose port 80
-EXPOSE 80
+# ----------------------------
+# Set Apache DocumentRoot to public/
+# ----------------------------
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf
 
-# Start Apache
+# ----------------------------
+# Expose port and start Apache
+# ----------------------------
+EXPOSE 80
 CMD ["apache2-foreground"]
