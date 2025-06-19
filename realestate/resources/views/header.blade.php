@@ -196,3 +196,18 @@
             </div>
         </div>
     </div>
+    <script>
+    function togglePassword() {
+        let passwordInput = document.getElementById("password");
+        let eyeIcon = document.getElementById("eyeIcon");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            eyeIcon.setAttribute("data-feather", "eye-off");
+        } else {
+            passwordInput.type = "password";
+            eyeIcon.setAttribute("data-feather", "eye");
+        }
+        feather.replace(); // Update Feather icons
+    }
+    </script>
