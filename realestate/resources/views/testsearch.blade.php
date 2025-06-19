@@ -199,7 +199,7 @@
             Sq Ft: {{ $property['area'] ?? 0 }}
         </li>
     </ul>
-    <div> <span class="createdAt" id="createdAt_{{ $property['_id'] }}">{{ $property['created_at'] ?? 0 }}</span></div>
+
 
     <div class="property-btn d-flex flex-wrap align-items-center gap-2 mt-2">
 
