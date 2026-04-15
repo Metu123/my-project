@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container text-center mt-5">
-        <h2>Please Verify Your Email</h2>
+        <h2> Verify Your Email</h2>
         <p>You must verify your email before you can log in.</p>
         <a href="{{ url('/') }}" class="btn btn-primary">Go to Homepage</a>
     </div>
