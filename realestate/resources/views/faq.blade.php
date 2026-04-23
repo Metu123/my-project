@@ -59,7 +59,7 @@
                             </div>
                             <div id="collapse2" class="collapse" data-bs-parent="#accordion">
                                 <div class="card-body">
-                                    To post an ad, register on our website, navigate to the "Post Ad" section, fill in the property details, upload images, and submit your listing for approval.
+                                    To post an ad, signup on our website, navigate to the "Post Ad" section, fill in the property details, upload images, and submit your listing for approval.
                                 </div>
                             </div>
                         </div>
