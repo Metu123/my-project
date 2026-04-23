@@ -6,7 +6,7 @@
                     <div class="col text-center not-found">
                         <img src="../assets/images/inner-pages/2.jpg" class="img-fluid" alt="">
                         <h2>Whoops! errors ?</h2>
-                        <p class="font-roboto">we are sorry but the page you are looking for doesn't exist or has been removed. please check or search again.</p>
+                        <p class="font-roboto">we are sorry but the page you are looking for doesn't exist or has been removed.</p>
                         <div class="btns">
                             <a href="/" class="btn btn-gradient color-4">go to home page</a>
                             <a href="/contactus" class="btn btn-dashed color-4 ms-2">Report problem</a>
