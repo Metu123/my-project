@@ -9,7 +9,7 @@
                     <nav aria-label="breadcrumb" class="theme-breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item">Home</li>
-                            <li class="breadcrumb-item active" aria-current="page">Log in</li>
+                            <li class="breadcrumb-item active" aria-current="page">Login</li>
                         </ol>
                     </nav>
                 </div>
