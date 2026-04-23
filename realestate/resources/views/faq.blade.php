@@ -25,7 +25,7 @@
         <div class="row">
             <div class="col-lg-6 order-lg-1">
                 <div class="faq-image text-center">
-                    <h3>Have Any Questions?</h3>
+                    <h3>Do you have Any Questions?</h3>
                     <p class="font-roboto">You can ask anything you want to know in our contact</p>
                 </div>
             </div>
