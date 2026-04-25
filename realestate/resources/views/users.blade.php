@@ -77,7 +77,7 @@
                             <li class="sidebar-item">
                                 <a href="{{ url('/admin/users') }}" class="sidebar-link only-link">
                                     <i data-feather="users"></i>
-                                    <span>Users</span>
+                                    <span>User</span>
                                 </a>
                             </li>
 
