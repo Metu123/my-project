@@ -74,7 +74,7 @@
 
             <div class="row">
                 <div class="col-lg-4">
-                    <label for="max-rooms" class="font-rubik">Max Rooms</label>
+                    <label for="max-rooms" class="font-rubik">Max Room</label>
                     <input type="number" id="max-rooms" name="max_rooms" class="form-control" min="1" max="6" value="{{ request('max_rooms') }}" placeholder="Max Rooms">
                 </div>
                 <div class="col-lg-4">
